@@ -1,0 +1,149 @@
+echo 'Steps to deploy django application in apache2'
+#-------------------------------------------------------
+#step1: Install pip 
+#-------------------------------------------------------
+sudo apt-get -y install python-pip
+#-------------------------------------------------------
+#step2: install django
+#-------------------------------------------------------
+sudo pip install Django==1.8.2
+#------------------------------------------------------
+#step3: install mysql server
+#-------------------------------------------------------
+sudo apt-get -y install mysql-server
+#-------------------------------------------------------
+#step4: Install python mysql connector 
+#-------------------------------------------------------
+sudo apt-get -y install python2.7-mysqldb
+sudo apt-get -y install libmysqlclient-dev
+#-------------------------------------------------------
+#step5: install apache2 server
+#-------------------------------------------------------
+sudo apt-get -y install apache2
+#-------------------------------------------------------
+#step6: install mod_wsgi 
+#-------------------------------------------------------
+sudo apt-get -y install libapache2-mod-wsgi
+sudo service apache2 restart
+#-------------------------------------------------------
+#step7: copy django project in at path /var/www/
+#-------------------------------------------------------
+sudo chmod -R 777 Project-Name
+
+tar -xvzf community_images.tar.gz
+
+sudo chmod -R 777 folder_path
+
+
+#-------------------------------------------------------
+#step8: configure projectname.wsgi file at /var/www/
+#-------------------------------------------------------
+projectname.wsgi
+import os
+import sys
+sys.path = ['/var/www/Project-Name'] + sys.path
+print sys.path
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Project-Name.settings'
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+
+
+#-------------------------------------------------------
+#step8: Create a projeject configuration file 
+#-------------------------------------------------------
+cd /etc/apache2/sites-enabled/
+
+# File name: projectname.com.conf
+# FIle Contents: 
+
+WSGIScriptAlias /  /var/www/Project-Name/Project-Name.wsgi
+
+<Directory /var/www/Project-Name/Project-Name>
+    <Files wsgi.py>
+        Order deny,allow
+        Require all granted
+    </Files>
+</Directory>
+
+Alias /media/ /var/www/Project-Name/static/templates/
+Alias /static/ /var/www/Project-Name/static/static/
+Alias /images/ /var/www/Project-Name/static/static/images/
+
+<Directory /var/www/Project-Name/static/>
+    Require all granted
+</Directory>
+
+<Directory /var/www/Project-Name/static/templates/>
+    Require all granted
+</Directory>
+
+<Directory /var/www/Project-Name/static/static/images/>
+    Require all granted
+</Directory>
+
+
+#-------------------------------------------------------
+#Step 9:Create databse and export uploaded database to it
+#-------------------------------------------------------
+
+ mysql -u user-name -p  # uswename replaced by root or that user name
+
+create database new_DB_Name;
+use DB_name;
+source path_to_SQL_File;
+
+
+Export databse 
+mysql -u root -p Project-Name < /var/www/Project-Name/Project-Name.sql
+
+
+
+#-------------------------------------------------------
+#services Restart commands
+#-------------------------------------------------------
+sudo service apache2 restart
+sudo /etc/init.d/mysql restart
+
+thats it enjoy the day........
+
+
+
+Upload file with filezilla to /home/azureuser
+Move file to /var/www
+Command: cd 
+extract: tar -xvf filename
+
+
+ sudo cp -r source_path destination_path
+sudo rm -rf Project-Name
+
+
+-------------------------------------------------------
+Additional Installation
+-------------------------------------------------------
+sudo apt-get -y install git
+sudo pip install git+https://github.com/dgrtwo/ParsePy.git
+sudo pip install django-celery
+
+
+-------------------------------------------------------
+Backup: To backup project files
+-------------------------------------------------------
+ find /var/www/Project-Name -path '*/.*' -prune -o -type f -print | zip ~/Project-Name_dateandtime.zip -@
+ mysqldump -u root -p Project-Name > Project-Name_dateandtime.sql
+
+unzip Project-Name_092220151630.zip -d Project-Name_092220151630
+
+ cd /var/www/
+ sudo chmod -R 777 Project-Name
+
+	sudo service apache2 restart
+sudo /etc/init.d/mysql restart
+===============================================================================
+sudo start mysql
+
+sudo restart mysql # The service must be running
+
+sudo stop mysql # The service must be running
+
+===============================================================================
